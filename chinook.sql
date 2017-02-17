@@ -13,14 +13,6 @@ SELECT *
 FROM Employee
 WHERE Employee.Title = "Sales Support Agent"
 
-SELECT BillingCountry
-FROM Invoice
-
-SELECT DISTINCT BillingCountry
-FROM Invoice
-
-SELECT * 
-FROM Invoice
 
 SELECT e.EmployeeId, e.FirstName, e.LastName
 FROM Employee e, Invoice I, Customer c
@@ -33,21 +25,19 @@ WHERE I.CustomerId = c.CustomerId AND
  I.BillingCountry = c.Country AND 
  e.EmployeeId = c.SupportRepId;
  
- SELECT *
- FROM Invoice
- WHERE Invoice.InvoiceDate  between '2009-01-01 00:00:00' and '2011-12-31-11-59';
- 
- SELECT *
- FROM Invoice
- 
- SELECT InvoiceDate between '2009-01-01 00:00:00' and '2009-12-31 11:59:59' , Sum(Total)
- FROM Invoice
- WHERE Invoice.InvoiceDate between '2009-01-01 00:00:00' and '2009-12-31 11:59:59' ;
- 
- SELECT InvoiceDate between '2010-01-01 00:00:00' and '2010-12-31 11:59:59' ,  Sum(Total)
- FROM Invoice
- WHERE InvoiceDate between '2010-01-01 00:00:00' and '2011-12-31 11:59:59' ;
- 
+SELECT *
+FROM Invoice
+WHERE Invoice.InvoiceDate  between '2009-01-01 00:00:00' and '2011-12-31-11-59';
+
+
+SELECT InvoiceDate between '2009-01-01 00:00:00' and '2009-12-31 11:59:59' , Sum(Total)
+FROM Invoice
+WHERE Invoice.InvoiceDate between '2009-01-01 00:00:00' and '2009-12-31 11:59:59' ;
+
+SELECT InvoiceDate between '2010-01-01 00:00:00' and '2010-12-31 11:59:59' ,  Sum(Total)
+FROM Invoice
+WHERE InvoiceDate between '2010-01-01 00:00:00' and '2011-12-31 11:59:59' ;
+
 SELECT InvoiceDate between '2011-01-01 00:00:00' and '2011-12-31 11:59:59' ,  Sum(Total)
 FROM Invoice
 WHERE InvoiceDate between '2011-01-01 00:00:00' and '2011-12-31 11:59:59' ;
@@ -68,18 +58,6 @@ SELECT Invoice.BillingCountry, Count(Invoice.BillingCountry)
 FROM Invoice
 GROUP BY Invoice.BillingCountry
 
-SELECT *
-FROM Track
-
-SELECT * 
-FROM Playlist
-
-SELECT *
-FROM Track
-
-SELECT * 
-FROM PlaylistTrack;
-
 SELECT Playlist.Name, COUNT(PlaylistTrack.TrackId)
 FROM Playlist, PlaylistTrack, Track
 WHERE Track.TrackId = PlaylistTrack.TrackId  AND
@@ -94,12 +72,6 @@ FROM Track t, Album a, MediaType m, Genre g
 WHERE t.AlbumId = a.AlbumId AND
 m.MediaTypeId = t.MediaTypeId AND
 g.GenreId = t.GenreId;
-
-SELECT *
-FROM Invoice
-
-SELECT *
-FROM InvoiceLine
 
 SELECT Invoice.* , InvoiceLine.InvoiceLineId
 FROM Invoice, InvoiceLine
@@ -124,16 +96,18 @@ FROM Employee e, Customer c
 WHERE e.EmployeeId = c.SupportRepId
 Group By e.EmployeeId;
 
-
-
-
 SELECT b.BillingCountry, Sum(b.Total) AS "Total"
 FROM Invoice b
 Group BY b.BillingCountry IN (SELECT Max(Total)
 FROM Invoice)
 
-SELECT *
-FROM Track
+SELECT p.PlaylistId, s.Name, COUNT(p.TrackId) AS Total
+FROM PlaylistTrack p, Track t, Playlist s
+WHERE p.TrackId = t.TrackId AND
+p.PlaylistId = s.PlaylistId
+GROUP BY p.PlaylistId
+Order By Total DESC;
+
 
 SELECT InvoiceLine.TrackId , InvoiceLIne.InvoiceId, Count(InvoiceLine.TrackId) AS 'Sum'
 FROM Track, InvoiceLine, Invoice
@@ -143,6 +117,29 @@ InvoiceLine.InvoiceId = Invoice.InvoiceId
 Group By InvoiceLine.TrackId
 Order By Sum DESC
 
+SELECT InvoiceLine.TrackId , Track.Name, InvoiceLIne.InvoiceId, Count(Track.AlbumId) AS Total
+FROM Track, InvoiceLine, Invoice, Album
+WHERE Album.AlbumId = Track.AlbumId AND
+InvoiceLine.InvoiceId = Invoice.InvoiceId AND
+InvoiceLine.TrackId = Track.TrackId
+Group By Track.AlbumId
+Order By Total DESC
+Limit 5
 
+SELECT a.ArtistId, a.Name, Count(a.ArtistId) AS Total
+FROM Artist a, Album b, Track t, Invoice c, InvoiceLine d
+WHERE a.ArtistId = b.ArtistId AND
+t.AlbumId = b.AlbumId AND
+t.TrackId = d.TrackId
+GROUP BY a.ArtistId
+ORDER BY Total DESC 
+LIMIT 3
+
+SELECT m.Name, Count(m.MediaTypeId) As Total
+FROM MediaType m, Track t, InvoiceLine n
+WHERE m.MediaTypeId = t.MediaTypeId AND
+t.TrackId = n.TrackId
+GROUP BY m.MediaTypeId
+ORDER BY Total DESC;
 
 

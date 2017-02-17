@@ -1,0 +1,5 @@
+SELECT c.FirstName, c.LastName, I.InvoiceId, I.InvoiceDate, I.BillingCountry
+FROM Invoice I, Customer c
+WHERE I.CustomerId = c.CustomerId AND
+I.BillingCountry = c.Country  AND
+I.BillingCountry = "Brazil";
